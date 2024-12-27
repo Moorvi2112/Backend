@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f8ff;
+            text-align: center;
+        }
+        h1 { color:#030A5E; margin: 20px 0; }
+        .container { max-width: 90%; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #fff; text-align: center; }
+        th { background: #030A5E; color: #fff; }
+        tr:nth-child(even) { background: #fff; }
+        tr:hover { background: #DCDCDC;}
+        .error-message { color: red; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Student Data</h1>
+    <div class="container">
+        <p id="error-message" class="error-message"></p>
+        <table id="data-table"></table>
+    </div>
+    <script>
+        fetch("http://localhost:3000")
+            .then(res => res.ok ? res.json() : Promise.reject("Failed to load"))
+            .then(data => {
+                const table = document.getElementById("data-table");
+                const headers = ["Name", "Email", "Phone", "Date of Birth", "Gender", "Zip Code", "Country", "Course"];
+                table.innerHTML = `
+                    <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+                    <tbody>
+                        ${data.map(person => `
+                            <tr>
+                                <td>${person.fullname || "Unknown Name"}</td>
+                                <td>${person.email || "Unknown Email"}</td>
+                                <td>${person.phone || "Unknown Phone"}</td>
+                                <td>${person.dob || "Unknown DOB"}</td>
+                                <td>${person.gender || "Unknown Gender"}</td>
+                                <td>${person.zipcode || "Unknown Zip Code"}</td>
+                                <td>${person.country || "Unknown Country"}</td>
+                                <td>${person.course || "Unknown Course"}</td>
+                            </tr>`).join("")}
+                    </tbody>`;
+            })
+            .catch(err => {
+                document.getElementById("error-message").textContent = "Failed to load student data.";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
